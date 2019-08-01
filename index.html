@@ -476,7 +476,7 @@ $curl -X PUT localhost:9200/big-one/pizza/1 --data
                     </ul>
                 </section>
                 <section>
-                    <pre><code class="csharp">    
+                    <pre><code class="csharp" style="max-height: 650px">    
 public class CustomerInfoSearchDocumentMap 
     : PropertiesDescriptor&lt;CustomerInfoSearchDocument&gt;
 {
@@ -484,17 +484,14 @@ public class CustomerInfoSearchDocumentMap
     {
         Keyword(p => p.Name(n => n.Id).Index());
         Number(p => p.Name(n => n.Age).Index());
-
         Text(p => p.Name(n => n.FirstName)
                 .Analyzer(Analyzer.PrimaryField)
                 .SearchAnalyzer(Analyzer.PrimaryFieldSearch)
         );
-                        
         Text(p => p.Name(n => n.LastName)
                 .Analyzer(Analyzer.PrimaryField)
                 .SearchAnalyzer(Analyzer.PrimaryFieldSearch)
         );
-                        
         Text(p => p.Name(n => n.FullName).Index()
                 .Fields(fs => fs
                     .Keyword(k => k
@@ -696,8 +693,8 @@ POST my_index/_analyze
                     <h2>ASCII Folding Filter</h2>
                     <p>Example of scandinavian_folding</p>
                     <pre><code class="hljs" data-trim contenteditable>
-            åÅäæÄÆ->a 
-            öÖøØ->o
+åÅäæÄÆ->a 
+öÖøØ->o
                                                 </code></pre>
                 </section>
                 <section>
@@ -786,8 +783,7 @@ GET my_index/_search
                 </section>
                 <section>
                     <h2>Fields</h2>
-                    <p>C#</p>
-                    <pre><code data-trim contenteditable>
+                    <pre><code class="csharp" data-trim contenteditable>
 Text(p => p.Name(n => n.FullName)
     .Fields(fs => fs
     .Keyword(k => k
@@ -796,6 +792,91 @@ Text(p => p.Name(n => n.FullName)
     );
         </code></pre>
                 </section>
+                <section>
+                    <h2>Nested vs Object</h2>
+                    <pre><code class="csharp" data-trim contenteditable>
+public class Book
+{
+    public int Id { get; set; }
+
+    public string Title { get; set; }
+
+    public IEnumerable<Author> Authors { get; set; }
+}
+
+public class Author
+{
+    public string First { get; set; }
+
+    public string Last { get; set; }
+}
+            </code></pre>
+                </section>
+                <section>
+                    <h2>Nested vs Object</h2>
+                    <pre><code class="csharp" data-trim contenteditable>
+public class BookMap 
+    : PropertiesDescriptor&lt;Book&gt;
+{
+    public BookMap()
+    {
+        Keyword(p => p.Name(n => n.Id).Index());
+        Text(p => p.Name(n => n.Title)
+                .Analyzer(Analyzer.PrimaryField)
+                .SearchAnalyzer(Analyzer.PrimaryFieldSearch)
+        );
+        
+        Object&lt;Author&gt;(p => p.Name(n => n.Authors));
+        Nested&lt;Author&gt;(p => p.Name(n => n.Authors));
+}
+                </code></pre>
+                </section>
+                <section>
+                    
+                    <pre><code data-trim contenteditable>
+PUT book/_doc/1
+{
+    "title" : "Clean Code",
+    "authors" : [ 
+    {
+        "first" : "Robert",
+        "last" :  "Martin"
+    },
+    {
+        "first" : "Kent",
+        "last" :  "Beck"
+    }]
+}
+                    </code></pre>
+                    <div class="fragment">
+                        <p>Would be transformed internally into a document that looks more like this in Object type
+                            case:</p>
+                        <pre><code data-trim contenteditable>
+{
+    "title" :        "clean code",
+    "authors.first" : [ "robert", "kent" ],
+    "authors.last" :  [ "martin", "beck" ]
+}
+                                                        </code></pre>
+                    </div>
+
+                </section>
+                <section>
+                        <h2>Nested vs Object</h2>
+                        <pre><code data-trim contenteditable>
+GET my_index/_search
+{
+    "query": {
+    "bool": {
+        "must": [
+        { "match": { "authors.first": "robert" }},
+        { "match": { "authors.last":  "beck" }}
+        ]
+    }
+    }
+}
+                        </code></pre>
+                    </section>
             </section>
 
             <section data-title="Search">
