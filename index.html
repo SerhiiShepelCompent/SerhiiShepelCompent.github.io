@@ -62,7 +62,7 @@
                 </aside>
             </section>
 
-            <section>
+            <section data-title="Agenda">
                 <h2>Agenda</h2>
                 <ul>
                     <li class="fragment">Elasticsearch
@@ -73,6 +73,7 @@
                     </li>
                     <li class="fragment">Basic Concepts</li>
                     <li class="fragment">How does a search engine work</li>
+                    <li class="fragment">Mapping</li>
                     <li class="fragment">Own experience</li>
                 </ul>
                 <aside class="notes">
@@ -205,57 +206,6 @@
                 </section>
 
                 <section>
-                    <h2>Let's do an example - A BigOne pizza website</h2>
-                    <ul>
-                        <li class="fragment">We are building a website to find BigOne pizzas</li>
-                        <li class="fragment">We have a collection of BigOne pizzas
-                            <br />
-                            <img data-src="images/big-one-chicken.jpg" />
-                            <img data-src="images/big-one-bacon.jpg" />
-                            <img data-src="images/big-one-classic.jpg" />
-                        </li>
-                        <li class="fragment">We want simple text based searching</li>
-                    </ul>
-                </section>
-
-                <section>
-                    <h2>How to store the pizzas?</h2>
-
-                    <p>The act of storing data in Elasticsearch is called indexing.</p>
-                    <pre><code class="hljs" data-trim contenteditable>
-    $curl -X POST localhost:9200/big-one/pizza/1 --data
-    '{
-        "name": "California Sunset Chicken"
-    }'
-    
-    $curl -X POST localhost:9200/big-one/pizza/2 --data
-    '{
-        "name": "American Bacon"
-    }'
-    
-    $curl -X POST localhost:9200/big-one/pizza/3 --data
-    '{
-        "name": "Classic American"
-    }'
-                    </code></pre>
-                    <aside class="notes">
-                        It is much like the INSERT keyword in SQL except that, if the document already exists, the new
-                        document would replace the old. The second part indicates on which index (an index could be
-                        compared to an SQL database, though I
-                        don’t like this comparison) your query will be performed, and what is the type (a type could be
-                        compared to an SQL table, though I don’t like this comparison either) of the document. From now,
-                        I
-                        will write indices and types in orange
-
-                        <!--
-    curl -X POST localhost:9200/big-one/pizza/1 --data '{ "name": "California Sunset Chicken" }'
-    curl -X POST localhost:9200/big-one/pizza/2 --data '{ "name": "American Bacon" }'
-    curl -X POST localhost:9200/big-one/pizza/3 --data '{ "name": "Classic American"}'
-    -->
-                    </aside>
-                </section>
-
-                <section>
                     <h2>Get</h2>
                     <pre><code class="hljs" data-trim contenteditable>
                         $curl -X GET localhost:9200/big-one/pizza/1
@@ -322,7 +272,7 @@
                     </ul>
                 </section>
 
-                <section>
+                <!-- <section>
                     <h2>Full-text search</h2>
                     <p>Find all the pizzas that contains the word "American"</p>
                     <pre><code class="hljs" data-trim contenteditable>
@@ -432,7 +382,7 @@
        }
     }
                     </code></pre>
-                </section>
+                </section> -->
             </section>
 
             <section data-title="Basic Concepts">
@@ -454,6 +404,11 @@
                                     how each field in the document is analyzed</li>
                             </ul>
                         </li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>Basic Concepts</h2>
+                    <ul>
                         <li class="fragment">Document:
                             <ul>
                                 <li class="fragment">A document is a JSON document which is stored in elasticsearch. It
@@ -467,6 +422,11 @@
                                 </li>
                             </ul>
                         </li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>Basic Concepts</h2>
+                    <ul>
                         <li class="fragment">Field:
                             <ul>
                                 <li class="fragment">A document contains a list of fields, or key-value pairs. The value
@@ -482,6 +442,11 @@
                                 </li>
                             </ul>
                         </li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>Basic Concepts</h2>
+                    <ul>
                         <li class="fragment">Mapping:
                             <ul>
                                 <li class="fragment">A mapping is like a ‘schema definition’ in a relational database.
@@ -594,17 +559,106 @@
                     <h2>Search against the inverted index</h2>
                     <img style="box-shadow: none;" data-src="images/inverted-index-3.svg">
                 </section>
+            </section>
 
-                <section data-background="white">
-                    <h2>Sort by relevance</h2>
+            <section data-title="Mapping">
+                <section>
+                    <h2>Mapping</h2>
+                    <ul>
+                        <li class="fragment">Each field has a data type which can be:
+                            <ul>
+                                <li class="fragment">a simple type like <i>text</i>, <i>keyword</i>, <i>date</i>,
+                                    <i>long</i>, <i>double</i>, <i>boolean</i> or <i>ip</i> .</li>
+                                <li class="fragment">a type which supports the hierarchical nature of JSON such as
+                                    <i>object</i> or <i>nested</i>.</li>
+                                <li class="fragment">or a specialised type like <i>geo_point</i>, <i>geo_shape</i>, or
+                                    <i>completion</i>>.</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>Mapping</h2>
+                    <ul>
+                        <li class="fragment">It is often useful to index the same field in different ways for different
+                            purposes. For instance, a <i>string</i> field could be indexed as a <i>text</i> field for
+                            full-text search, and as a <i>keyword</i> field for sorting or aggregations. Alternatively,
+                            you could
+                            index a string field with the <i>standard</i> analyzer, the english analyzer, and the french
+                            analyzer.
+                        </li>
+                        <li class="fragment">This is the purpose of multi-fields. Most datatypes support multi-fields
+                            via the fields parameter.
+                        </li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>C#</h2>
+                    <pre><code class="csharp">    
+public class CustomerInfoSearchDocumentMap 
+    : PropertiesDescriptor&lt;CustomerInfoSearchDocument&gt;
+{
+    public CustomerInfoSearchDocumentMap()
+    {
+        Keyword(p => p.Name(n => n.Id).Index());
+        Number(p => p.Name(n => n.Age).Index());
 
-                    <p>How well each document matches the query</p>
-                    <img style="box-shadow: none;" data-src="images/inverted-index-4.svg">
-                    <aside class="notes">
-                        By default, Elasticsearch sorts matching results by their relevance score, that is, by how well
-                        each
-                        document matches the query.
-                    </aside>
+        Text(p => p.Name(n => n.FirstName)
+                .Analyzer(Analyzer.PrimaryField)
+                .SearchAnalyzer(Analyzer.PrimaryFieldSearch)
+        );
+                        
+        Text(p => p.Name(n => n.LastName)
+                .Analyzer(Analyzer.PrimaryField)
+                .SearchAnalyzer(Analyzer.PrimaryFieldSearch)
+        );
+                        
+        Text(p => p.Name(n => n.FullName).Index()
+                .Fields(fs => fs
+                    .Keyword(k => k
+                        .Name(n => n.FullName.Suffix(Normalizer.Sort))
+                        .Normalizer(Normalizer.Sort))
+                    );
+        }
+}
+                        </code></pre>
+                </section>
+                <section>
+                    <h2>Analyzer</h2>
+                    <ul>
+                        <li class="fragment">Tokenizer</li>
+                        <li class="fragment">Filters</li>
+                        <li class="fragment">CharFilters</li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>Tokenizer</h2>
+                    <ul>
+                        <li class="fragment">Standard Tokenizer</li>
+                        <li class="fragment">Letter Tokenizer</li>
+                        <li class="fragment">Lowercase Tokenizer</li>
+                        <li class="fragment">Whitespace Tokenizer</li>
+                        <li class="fragment">UAX URL Email Tokenizer</li>
+                        <li class="fragment">Classic Tokenizer</li>
+                        <li class="fragment">Thai Tokenizer</li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>Standart Tokenizer</h2>
+                    <p>Example</p>
+                    <pre><code class="hljs" data-trim contenteditable>
+POST _analyze
+{
+    "tokenizer": "standard",
+    "text": "The 2 QUICK Brown-Foxes jumped over the lazy dog's bone."
+}
+                    </code></pre>
+                    <div class="fragment">
+                        <p>The above sentence would produce the following terms:</p>
+                        <pre><code class="hljs" data-trim contenteditable>
+[ The, 2, QUICK, Brown, Foxes, jumped, over, the, lazy, dog's, bone ]
+                    </code></pre>
+                    </div>
                 </section>
             </section>
 
