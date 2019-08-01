@@ -67,20 +67,16 @@
                 <ul>
                     <li class="fragment">Elasticsearch
                         <ul>
-                            <li class="fragment">What is</li>
-                            <li class="fragment">How to get started</li>
+                            <li>What is</li>
+                            <li>How to get started</li>
                         </ul>
                     </li>
                     <li class="fragment">Basic Concepts</li>
                     <li class="fragment">How does a search engine work</li>
                     <li class="fragment">Mapping</li>
+                    <li class="fragment">Search</li>
                     <li class="fragment">Own experience</li>
                 </ul>
-                <aside class="notes">
-                    <ul>
-                        <li>Agendaen idag er som følgende...</li>
-                    </ul>
-                </aside>
             </section>
 
             <section data-title="Elasticsearch" data-background="white">
@@ -153,19 +149,19 @@
 
                     <p>You can access it at http://localhost:9200 on your web browser, which returns this:</p>
                     <pre class="fragment"><code class="hljs" data-trim contenteditable>
-    {
-       "status":200,
-       "name":"Cypher",
-       "cluster_name":"elasticsearch",
-       "version":{
-          "number":"1.5.2",
-          "build_hash":"62ff9868b4c8a0c45860bebb259e21980778ab1c",
-          "build_timestamp":"2015-04-27T09:21:06Z",
-          "build_snapshot":false,
-          "lucene_version":"4.10.4"
-       },
-       "tagline":"You Know, for Search"
-    }                    
+{
+    "status":200,
+    "name":"Cypher",
+    "cluster_name":"elasticsearch",
+    "version":{
+        "number":"1.5.2",
+        "build_hash":"62ff9868b4c8a0c45860bebb259e21980778ab1c",
+        "build_timestamp":"2015-04-27T09:21:06Z",
+        "build_snapshot":false,
+        "lucene_version":"4.10.4"
+    },
+    "tagline":"You Know, for Search"
+}                    
                     </code></pre>
                 </section>
 
@@ -197,11 +193,11 @@
 
                     <p>JSON documents!</p>
                     <pre class="json"><code class="hljs" data-trim contenteditable>
-    {
-       "title": "Introduction to Elasticsearch",
-       "date": "2016-04-07",
-       "author": "Serhii Shepel"
-    }
+{
+    "title": "Introduction to Elasticsearch",
+    "date": "2016-04-07",
+    "author": "Serhii Shepel"
+}
                     </code></pre>
                 </section>
 
@@ -212,36 +208,36 @@
                     </code></pre>
                     <p>Result:</p>
                     <pre class="fragment"><code class="hljs" data-trim contenteditable>
-    {
-       "_index":"big-one",
-       "_type":"pizza",
-       "_id":"1",
-       "_version":1,
-       "found":true,
-       "_source":{
-          "name":"California Sunset Chicken"
-       }
+{
+    "_index":"big-one",
+    "_type":"pizza",
+    "_id":"1",
+    "_version":1,
+    "found":true,
+    "_source":{
+        "name":"California Sunset Chicken"
     }
+}
                     </code></pre>
                 </section>
 
                 <section>
                     <h2>Update</h2>
                     <pre><code class="hljs" data-trim contenteditable>
-    $curl -X PUT localhost:9200/big-one/pizza/1 --data
-    '{
-       "name":"California Sunset Chicken Awesome"
-    }'
+$curl -X PUT localhost:9200/big-one/pizza/1 --data
+'{
+    "name":"California Sunset Chicken Awesome"
+}'
                     </code></pre>
                     <p>Result:</p>
                     <pre class="fragment"><code class="hljs" data-trim contenteditable>
-    {
-       "_index":"big-one",
-       "_type":"pizza",
-       "_id":"1",
-       "_version":2,
-       "created":false
-    }
+{
+    "_index":"big-one",
+    "_type":"pizza",
+    "_id":"1",
+    "_version":2,
+    "created":false
+}
                    </code></pre>
                 </section>
 
@@ -268,138 +264,25 @@
                                 <li>Easy to use</li>
                             </ul>
                         </li>
-                        <li>Now to the really cool part, full-text search...</li>
                     </ul>
                 </section>
-
-                <!-- <section>
-                    <h2>Full-text search</h2>
-                    <p>Find all the pizzas that contains the word "American"</p>
-                    <pre><code class="hljs" data-trim contenteditable>
-                        $curl -X GET localhost:9200/big-one/pizza/_search?q=American
-                    </code></pre>
-                </section>
-
-                <section>
-                    <h2>Full-text search - Result</h2>
-                    <pre class="json"><code class="hljs">
-    {
-       "took":4,
-       "timed_out":false,
-       "_shards":{
-          "total":5,
-          "successful":5,
-          "failed":0
-       },
-       "hits":{
-          "total":2,
-          "max_score":0.19178301,
-          "hits":[
-             {
-                "_index":"big-one",
-                "_type":"pizza",
-                "_id":"2",
-                "_score":0.19178301,
-                "_source":{
-                   "name":"American Bacon"
-                }
-             },
-             {
-                "_index":"big-one",
-                "_type":"pizza",
-                "_id":"3",
-                "_score":0.19178301,
-                "_source":{
-                   "name":"Classic American"
-                }
-             }
-          ]
-       }
-    }
-                    </code></pre>
-                    <aside class="notes">
-                        <p>Sorted by relevance!</p>
-                    </aside>
-                </section>
-
-                <section>
-                    <h2>Alternate Approach</h2>
-                    <ul>
-                        <li>Search using Query DSL</li>
-                    </ul>
-                </section>
-
-                <section>
-                    <h2>Full-text search</h2>
-
-                    <p>Find the pizzas with a name that contains the word "American"</p>
-                    <pre><code class="hljs" data-trim contenteditable>
-                        $curl -XGET localhost:9200/big-one/pizza/_search -d
-    '{
-       "query":{
-          "match":{
-             "name":"American"
-          }
-       }
-    }'
-                    </code></pre>
-                </section>
-
-                <section>
-                    <h2>Full-text search - result</h2>
-                    <pre><code class="hljs" data-trim contenteditable>
-    {
-       "took": 8,
-       "timed_out": false,
-       "_shards": {
-          "total": 5,
-          "successful": 5,
-          "failed": 0
-       },
-       "hits": {
-          "total": 2,
-          "max_score": 0.19178301,
-          "hits": [
-             {
-                "_index": "big-one",
-                "_type": "pizza",
-                "_id": "2",
-                "_score": 0.19178301,
-                "_source": {
-                   "name": "American Bacon"
-                }
-             },
-             {
-                "_index": "big-one",
-                "_type": "pizza",
-                "_id": "3",
-                "_score": 0.19178301,
-                "_source": {
-                   "name": "Classic American"
-                }
-             }
-          ]
-       }
-    }
-                    </code></pre>
-                </section> -->
             </section>
 
             <section data-title="Basic Concepts">
                 <section>
                     <h2>Basic Concepts</h2>
                     <ul>
-                        <li class="fragment">Index:
+                        <li>Index:
                             <ul>
-                                <li class="fragment">An index is like a ‘database’ in a relational database. It has a
+                                <li>An index is like a ‘database’ in a relational database. It has a
                                     mapping which defines multiple types. </li>
-                                <li class="fragment">An index is a logical namespace which maps to one or more primary
+                                <li>An index is a logical namespace which maps to one or more primary
                                     shards and can have zero or more replica shards</li>
                             </ul>
                         </li>
-                        <li class="fragment">Type:
+                        <li>Type:
                             <ul>
-                                <li class="fragment">A type is like a ‘table’ in a relational database. Each type has a
+                                <li>A type is like a ‘table’ in a relational database. Each type has a
                                     list of fields that can be specified for documents of that type. The mapping defines
                                     how each field in the document is analyzed</li>
                             </ul>
@@ -409,13 +292,13 @@
                 <section>
                     <h2>Basic Concepts</h2>
                     <ul>
-                        <li class="fragment">Document:
+                        <li>Document:
                             <ul>
-                                <li class="fragment">A document is a JSON document which is stored in elasticsearch. It
+                                <li>A document is a JSON document which is stored in elasticsearch. It
                                     is like a row in a table in a relational database. Each document is stored in an
                                     index and has a type and an id.
                                 </li>
-                                <li class="fragment">A document is a JSON object (also known in other languages as a
+                                <li>A document is a JSON object (also known in other languages as a
                                     hash / hashmap/ associative array) which contains zero or more fields, or key-value
                                     pairs. The original JSON document that is indexed will be stored in the _source
                                     field, which is returned by default when getting or searching for a document.
@@ -427,15 +310,15 @@
                 <section>
                     <h2>Basic Concepts</h2>
                     <ul>
-                        <li class="fragment">Field:
+                        <li>Field:
                             <ul>
-                                <li class="fragment">A document contains a list of fields, or key-value pairs. The value
+                                <li>A document contains a list of fields, or key-value pairs. The value
                                     can be a simple (scalar) value (ega string, integer, date), or a nested structure
                                     like an array or an object. A field is similar to a column in a table in a
                                     relational database.
 
                                 </li>
-                                <li class="fragment">The mapping for each field has a field ‘type’ (not to be confused
+                                <li>The mapping for each field has a field ‘type’ (not to be confused
                                     with document type) which indicates the type of data that can be stored in that
                                     field, eginteger, string, object. The mapping also allows you to define (amongst
                                     other things) how the value for a field should be analyzed.
@@ -447,9 +330,9 @@
                 <section>
                     <h2>Basic Concepts</h2>
                     <ul>
-                        <li class="fragment">Mapping:
+                        <li>Mapping:
                             <ul>
-                                <li class="fragment">A mapping is like a ‘schema definition’ in a relational database.
+                                <li>A mapping is like a ‘schema definition’ in a relational database.
                                     Each index has a mapping, which defines each type within the index, plus a number of
                                     index-wide settings. A mapping can either be defined explicitly, or it will be
                                     generated automatically when a document is indexed
@@ -565,13 +448,13 @@
                 <section>
                     <h2>Mapping</h2>
                     <ul>
-                        <li class="fragment">Each field has a data type which can be:
+                        <li>Each field has a data type which can be:
                             <ul>
-                                <li class="fragment">a simple type like <i>text</i>, <i>keyword</i>, <i>date</i>,
+                                <li>a simple type like <i>text</i>, <i>keyword</i>, <i>date</i>,
                                     <i>long</i>, <i>double</i>, <i>boolean</i> or <i>ip</i> .</li>
-                                <li class="fragment">a type which supports the hierarchical nature of JSON such as
+                                <li>a type which supports the hierarchical nature of JSON such as
                                     <i>object</i> or <i>nested</i>.</li>
-                                <li class="fragment">or a specialised type like <i>geo_point</i>, <i>geo_shape</i>, or
+                                <li>or a specialised type like <i>geo_point</i>, <i>geo_shape</i>, or
                                     <i>completion</i>>.</li>
                             </ul>
                         </li>
@@ -580,20 +463,19 @@
                 <section>
                     <h2>Mapping</h2>
                     <ul>
-                        <li class="fragment">It is often useful to index the same field in different ways for different
+                        <li>It is often useful to index the same field in different ways for different
                             purposes. For instance, a <i>string</i> field could be indexed as a <i>text</i> field for
                             full-text search, and as a <i>keyword</i> field for sorting or aggregations. Alternatively,
                             you could
                             index a string field with the <i>standard</i> analyzer, the english analyzer, and the french
                             analyzer.
                         </li>
-                        <li class="fragment">This is the purpose of multi-fields. Most datatypes support multi-fields
+                        <li>This is the purpose of multi-fields. Most datatypes support multi-fields
                             via the fields parameter.
                         </li>
                     </ul>
                 </section>
                 <section>
-                    <h2>C#</h2>
                     <pre><code class="csharp">    
 public class CustomerInfoSearchDocumentMap 
     : PropertiesDescriptor&lt;CustomerInfoSearchDocument&gt;
@@ -621,26 +503,74 @@ public class CustomerInfoSearchDocumentMap
                     );
         }
 }
-                        </code></pre>
+                                </code></pre>
                 </section>
+
                 <section>
                     <h2>Analyzer</h2>
                     <ul>
-                        <li class="fragment">Tokenizer</li>
-                        <li class="fragment">Filters</li>
-                        <li class="fragment">CharFilters</li>
+                        <li>Tokenizer</li>
+                        <li>Filters</li>
+                        <li>CharFilters</li>
                     </ul>
                 </section>
                 <section>
                     <h2>Tokenizer</h2>
                     <ul>
-                        <li class="fragment">Standard Tokenizer</li>
-                        <li class="fragment">Letter Tokenizer</li>
-                        <li class="fragment">Lowercase Tokenizer</li>
-                        <li class="fragment">Whitespace Tokenizer</li>
-                        <li class="fragment">UAX URL Email Tokenizer</li>
-                        <li class="fragment">Classic Tokenizer</li>
-                        <li class="fragment">Thai Tokenizer</li>
+                        <li>Standard Tokenizer:
+                            <ul>
+                                <li>The standard tokenizer divides text into terms on word boundaries, as defined by the
+                                    Unicode Text Segmentation algorithm. It removes most punctuation symbols. It is the
+                                    best choice for most languages.
+                                </li>
+                            </ul>
+                        </li>
+                        <li>Letter Tokenizer
+                            <ul>
+                                <li>The letter tokenizer divides text into terms whenever it encounters a character
+                                    which is not a letter.
+                                </li>
+                            </ul>
+                        </li>
+                        <li>Lowercase Tokenizer
+                            <ul>
+                                <li>The lowercase tokenizer, like the letter tokenizer, divides text into terms whenever
+                                    it encounters a character which is not a letter, but it also lowercases all terms.
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>Tokenizer</h2>
+                    <ul>
+                        <li>Whitespace Tokenizer
+                            <ul>
+                                <li>The whitespace tokenizer divides text into terms whenever it encounters any
+                                    whitespace character.
+                                </li>
+                            </ul>
+                        </li>
+                        <li>UAX URL Email Tokenizer
+                            <ul>
+                                <li>The uax_url_email tokenizer is like the standard tokenizer except that it recognises
+                                    URLs and email addresses as single tokens.
+                                </li>
+                            </ul>
+                        </li>
+                        <li>Classic Tokenizer
+                            <ul>
+                                <li>The classic tokenizer is a grammar based tokenizer for the English Language.
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>Tokenizer</h2>
+                    <ul>
+                        <li>N-Gram Tokenizer</li>
+                        <li>Edge N-Gram Tokenizer</li>
                     </ul>
                 </section>
                 <section>
@@ -652,13 +582,297 @@ POST _analyze
     "tokenizer": "standard",
     "text": "The 2 QUICK Brown-Foxes jumped over the lazy dog's bone."
 }
-                    </code></pre>
+                        </code></pre>
                     <div class="fragment">
                         <p>The above sentence would produce the following terms:</p>
                         <pre><code class="hljs" data-trim contenteditable>
 [ The, 2, QUICK, Brown, Foxes, jumped, over, the, lazy, dog's, bone ]
-                    </code></pre>
+                        </code></pre>
                     </div>
+                </section>
+
+                <section>
+                    <h2>Ngram tokenizer</h2>
+                    <p>Example</p>
+                    <pre><code class="hljs" data-trim contenteditable>
+POST _analyze
+{
+    "tokenizer": "ngram",
+    "text": "Quick Fox"
+}
+                                </code></pre>
+                    <div class="fragment">
+                        <p>The above sentence would produce the following terms:</p>
+                        <pre><code class="hljs" data-trim contenteditable>
+[ Q, Qu, u, ui, i, ic, c, ck, k, F, Fo, o, ox, x ]
+                                </code></pre>
+                    </div>
+                </section>
+                <section>
+                    <h2>Ngram tokenizer</h2>
+                    <p>Configuration</p>
+                    <ul>
+                        <li>min_gram: Minimum length of characters in a gram. Defaults to 1.</li>
+                        <li>max_gram: Maximum length of characters in a gram. Defaults to 2.</li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>Ngram tokenizer</h2>
+                    <p>Configuration</p>
+                    <ul>
+                        <li>token_chars: Character classes that should be included in a token. Elasticsearch will split
+                            on characters that don’t belong to the classes specified. Defaults to [] (keep all
+                            characters). Character classes may be any of the following:
+                            <ul>
+                                <li>letter — for example a, b</li>
+                                <li>digit —  for example 3 or 7</li>
+                                <li>whitespace —  for example " "</li>
+                                <li>punctuation — for example ! or "</li>
+                                <li>symbol —  for example $ or √</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>Ngram tokenizer</h2>
+                    <p>Example</p>
+                    <pre><code class="hljs" data-trim contenteditable>
+"min_gram": 2,
+"max_gram": 3,
+"token_chars": [
+    "letter",
+    "digit"
+]
+
+POST _analyze
+{
+    "tokenizer": "ngram",
+    "text": "123 2 Quick"
+}
+                                    </code></pre>
+                    <div class="fragment">
+                        <p>The above sentence would produce the following terms:</p>
+                        <pre><code class="hljs" data-trim contenteditable>
+[12, 123, 23, Qu, Qui, ui, uic, ic, ick, ck]
+                                    </code></pre>
+                    </div>
+                </section>
+                <section>
+                    <h2>Edge NGram Token Filter</h2>
+                    <p>Example</p>
+                    <pre><code class="hljs" data-trim contenteditable>
+"min_gram": 2,
+"max_gram": 10,
+"token_chars": [
+    "letter",
+    "digit"
+]
+
+POST my_index/_analyze
+{
+    "analyzer": "my_analyzer",
+    "text": "2 Quick Foxes."
+}
+                                            </code></pre>
+                    <div class="fragment">
+                        <p>The above sentence would produce the following terms:</p>
+                        <pre><code class="hljs" data-trim contenteditable>
+[ Qu, Qui, Quic, Quick, Fo, Fox, Foxe, Foxes ]
+                                            </code></pre>
+                    </div>
+                </section>
+                <section>
+                    <h2>Filters</h2>
+                    <ul>
+                        <li>Lowercase</li>
+                        <li>Ngram</li>
+                        <li>EdgeNgram</li>
+                        <li>ASCII Folding</li>
+                        <li>Stop</li>
+                        <li>Stemmer</li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>ASCII Folding Filter</h2>
+                    <p>Example of scandinavian_folding</p>
+                    <pre><code class="hljs" data-trim contenteditable>
+            åÅäæÄÆ->a 
+            öÖøØ->o
+                                                </code></pre>
+                </section>
+                <section>
+                    <h2>Stop Token Filter</h2>
+                    <p>Example</p>
+                    <pre><code class="hljs" data-trim contenteditable>
+"my_stop": {
+    "type":       "stop",
+    "stopwords": "_english_"
+}
+
+POST my_index/_analyze
+{
+    "analyzer": "my_analyzer",
+    "text": "london is the capital of great britain"
+}
+                                            </code></pre>
+                    <div class="fragment">
+                        <p>The above sentence would produce the following terms:</p>
+                        <pre><code class="hljs" data-trim contenteditable>
+[ "london capital great britain" ]
+                                            </code></pre>
+                    </div>
+                </section>
+                <section>
+                    <h2>Stemmer Token Filter</h2>
+                    <p>Example</p>
+                    <pre><code data-trim contenteditable>
+Tryolabs -> tryolab
+running	-> run
+monkeys	-> monkei
+KANGAROOS -> kangaroo
+and	-> and
+jumping	-> jump
+elephants -> eleph
+                                                    </code></pre>
+                </section>
+                <section>
+                    <h2>Character Filters</h2>
+                    <ul>
+                        <li>HTML Strip Character Filter: The html_strip character filter strips out HTML elements like
+                            <b> and decodes HTML entities like &amp;.</b>></li>
+                        <li>Mapping Character Filter: The mapping character filter replaces any occurrences of the
+                            specified strings with the specified replacements.</li>
+                        <li>Pattern Replace Character Filter: The pattern_replace character filter replaces any
+                            characters matching a regular expression with the specified replacement.</li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>Fields</h2>
+                    <pre><code data-trim contenteditable>
+PUT my_index
+{
+    "mappings": {
+    "properties": {
+        "city": {
+        "type": "text",
+        "fields": {
+            "raw": { 
+            "type":  "keyword"
+            }
+        }
+        }
+    }
+    }
+}
+    </code></pre>
+                </section>
+
+                <section>
+                    <h2>Fields</h2>
+                    <pre><code data-trim contenteditable>
+GET my_index/_search
+{
+    "query": {
+    "match": {
+        "city": "york" 
+    }
+    },
+    "sort": {
+    "city.raw": "asc" 
+    }
+    }
+}
+        </code></pre>
+                </section>
+                <section>
+                    <h2>Fields</h2>
+                    <p>C#</p>
+                    <pre><code data-trim contenteditable>
+Text(p => p.Name(n => n.FullName)
+    .Fields(fs => fs
+    .Keyword(k => k
+        .Name(n => n.FullName.Suffix(Normalizer.Sort))
+        .Normalizer(Normalizer.Sort))
+    );
+        </code></pre>
+                </section>
+            </section>
+
+            <section data-title="Search">
+                <section>
+                    <h2>Simple structure of Search</h2>
+                    <pre><code class="hljs" style="max-height: 650px" data-trim contenteditable>
+GET /shirts/_search
+{
+    "from": 0, 
+    "size": 10,
+    "query": {
+        "bool": {
+            "filter": [
+            { "term": { "color": "red"   }}]
+        }
+    },
+    "highlight" : {
+        "fields" : {
+            "content" : {}
+        }
+    },
+    "aggs": {
+        "models": {
+            "terms": { "field": "model" } 
+        }
+    },
+    "post_filter": { 
+        "term": { "color": "red" }
+    },
+    "sort": ["_score","model"]
+}
+                                            </code></pre>
+                </section>
+                <section>
+                    <h2>Aggregations</h2>
+                    <a href="https://github.com/search?q=webgl" target="_blank">
+                        <img height="600" width="800" data-src="images/aggregations.png" />
+                    </a>
+                </section>
+                <section>
+                    <pre><code class="hljs" style="max-height: 650px" data-trim contenteditable>
+PUT /gitHubItem
+{
+    "mappings": {
+        "_doc": {
+            "properties": {
+                "title": { "type": "text", "analyer": "my_analyzer" },
+                "language": { "type": "keyword"}, //C#, Java, JavaScript
+                "type": { "type": "keyword"} //Repository, Code, Issues
+            }
+        }
+    }
+}
+                        </code></pre>
+                </section>
+                <section>
+                    <pre><code class="hljs" style="max-height: 650px" data-trim contenteditable>
+GET /gitHubItem/_search
+{
+    "query": {
+        "bool": {
+            "must" : [
+            { "term" : { "language" : "C#" } },
+            { "match" : { "title" : "webgl" } }]}
+    },
+    "aggs": {
+        "all_items": { 
+            global: {},
+            "filter" : { "match" : { "title" : "webgl" } },
+            "aggs": { "terms": { "field": "language" } }
+         },
+        "types": { "terms": { "field": "type" } },
+        
+    },
+    "post_filter": { "term": { "type": "repository" } }
+}
+                            </code></pre>
                 </section>
             </section>
 
@@ -667,105 +881,11 @@ POST _analyze
                     <h2>Own experience with Elasticsearch</h2>
                 </section>
 
-                <section data-background="images/kokeboka4.png">
-                    <aside class="notes">
-                        <ul>
-                            <li>
-                                Grunnen til at jeg ønsket å lære meg om søkemotorer var...
-                            </li>
-                            <li>
-                                At jeg lenge har samlet på mat oppskrifter...
-                            </li>
-                            <li>
-                                Og etter hvert har det blitt veldig mange mat oppskrifter, nesten 400 sider...
-                            </li>
-                            <li>
-                                Som gjør at det nesten er umulig å finne det man søke etter...
-                            </li>
-                            <li>
-                                F.eks jeg ønsker å finne alle hovedretter som inneholder kylling...
-                            </li>
-                        </ul>
-                    </aside>
-                </section>
-
-                <section>
-                    <h2>Alt Mulig Mat</h2>
-                    <ul>
-                        <li>Text based searching</li>
-                        <li>Structured searching (get all "Dessert" recipes)</li>
-                    </ul>
-                    <a href="https://altmuligmat.no" target="_blank"><img data-src="images/altmuligmat.png" /></a>
-                </section>
-
                 <section>
                     <h2>How to use Ealsticsearch?</h2>
-
                     <p>Commonly used in addition to another database...</p>
                     <img height="350" data-src="images/overview.png" />
                 </section>
-            </section>
-
-            <section>
-                <section>
-                    <h2>Use Cases</h2>
-                    <h5>What can Elasticsearch be used for?</h5>
-                </section>
-
-                <section>
-                    <h2>For Big Data</h2>
-
-                    <p>
-                        Github uses Elasticsearch to search 20TB data, including 1.3 billion files and 130 billion code
-                        lines
-                    </p>
-                    <aside class="notes">
-                        Relationship databases:
-                        <ul>
-                            <li>This works well with smaller data sets, but is not very scalable</li>
-                            <li>When the volume goes up, performance down (write operations)</li>
-                        </ul>
-                    </aside>
-                </section>
-
-                <section>
-                    <h2>Text search</h2>
-
-                    <p>With filtering, aggregations, highlightning, pagination...</p>
-                    <img data-src="images/github2.png" />
-                </section>
-
-                <section>
-                    <h2>Pure Analytics</h2>
-
-                    <p>Count things and summarize your data, lots of data, often on timestamped data!</p>
-                    <img data-src="images/analytics.jpg" />
-                </section>
-
-                <section>
-                    <h2>Centralized Logging</h2>
-
-                    <p>Logs > Logstash > Elasticsearch > Kibana</p>
-                    <img data-src="images/elk.png" />
-                </section>
-
-                <section>
-                    <h2>Geolocation</h2>
-                    <img data-src="images/fouraquare.png" />
-                </section>
-
-            </section>
-
-            <section>
-                <h2>The end!</h2>
-                <ul>
-                    <li>It is easy to start building advanced search functionality
-                        <ul>
-                            <li>No configuration is needed</li>
-                            <li>Just add data and start searching</li>
-                        </ul>
-                    </li>
-                </ul>
             </section>
 
             <section>
