@@ -73,7 +73,7 @@
                         </ul>
                     </li>
                     <li class="fragment">Own experience</li>
-                    <li class="fragment">Basic Concepts</li>
+                    <li class="fragment">Structure</li>
                     <li class="fragment">How does a search engine work</li>
                     <li class="fragment">Mapping</li>
                     <li class="fragment">Search</li>
@@ -121,7 +121,9 @@
                     <ul>
 
                         <li>Elasticsearch only requires Java to run</li>
-                        <li>Download Elasticsearch from <a href="https://www.elastic.co/downloads/elasticsearch">https://www.elastic.co/downloads/elasticsearch</a></li>
+                        <li>Download Elasticsearch from <a
+                                href="https://www.elastic.co/downloads/elasticsearch">https://www.elastic.co/downloads/elasticsearch</a>
+                        </li>
                         <li>Run bin/elasticsearch (or bin\elasticsearch.bat on Windows)</li>
                     </ul>
                 </section>
@@ -355,80 +357,15 @@ private async Task Create(IElasticClient client, CustomerDocument document)
                     <a target="_blank" href="https://teamdanmark.dk/om-os/atleter-og-resultater/resultater"><img
                             height="650" width="1000" data-src="images/medaloverview.png" /></a>
                 </section>
+                <section>
+                        <img data-src="images/tdcontact.png" />
+                </section>
             </section>
 
-            <section data-title="Basic Concepts">
+            <section data-title="ES Structure">
                 <section>
-                    <h2>Basic Concepts</h2>
-                    <ul>
-                        <li>Index:
-                            <ul>
-                                <li>An index is like a ‘database’ in a relational database. It has a
-                                    mapping which defines multiple types. </li>
-                                <li>An index is a logical namespace which maps to one or more primary
-                                    shards and can have zero or more replica shards</li>
-                            </ul>
-                        </li>
-                        <li>Type:
-                            <ul>
-                                <li>A type is like a ‘table’ in a relational database. Each type has a
-                                    list of fields that can be specified for documents of that type. The mapping defines
-                                    how each field in the document is analyzed</li>
-                            </ul>
-                        </li>
-                    </ul>
-                </section>
-                <section>
-                    <h2>Basic Concepts</h2>
-                    <ul>
-                        <li>Document:
-                            <ul>
-                                <li>A document is a JSON document which is stored in elasticsearch. It
-                                    is like a row in a table in a relational database. Each document is stored in an
-                                    index and has a type and an id.
-                                </li>
-                                <li>A document is a JSON object (also known in other languages as a
-                                    hash / hashmap/ associative array) which contains zero or more fields, or key-value
-                                    pairs. The original JSON document that is indexed will be stored in the _source
-                                    field, which is returned by default when getting or searching for a document.
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
-                </section>
-                <section>
-                    <h2>Basic Concepts</h2>
-                    <ul>
-                        <li>Field:
-                            <ul>
-                                <li>A document contains a list of fields, or key-value pairs. The value
-                                    can be a simple (scalar) value (ega string, integer, date), or a nested structure
-                                    like an array or an object. A field is similar to a column in a table in a
-                                    relational database.
-
-                                </li>
-                                <li>The mapping for each field has a field ‘type’ (not to be confused
-                                    with document type) which indicates the type of data that can be stored in that
-                                    field, eginteger, string, object. The mapping also allows you to define (amongst
-                                    other things) how the value for a field should be analyzed.
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
-                </section>
-                <section>
-                    <h2>Basic Concepts</h2>
-                    <ul>
-                        <li>Mapping:
-                            <ul>
-                                <li>A mapping is like a ‘schema definition’ in a relational database.
-                                    Each index has a mapping, which defines each type within the index, plus a number of
-                                    index-wide settings. A mapping can either be defined explicitly, or it will be
-                                    generated automatically when a document is indexed
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
+                    <h2>ES Structure</h2>
+                    <image data-src="images/structure.png">
                 </section>
             </section>
 
