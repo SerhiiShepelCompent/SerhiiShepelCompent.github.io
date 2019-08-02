@@ -49,7 +49,8 @@
 
         <div class="slides">
             <section data-background="images/relevance-scoring.jpg">
-                <h1>Elasticsearch best practice</h1>
+                <h1>Elasticsearch</h1>
+                <p>Best practice</p>
                 <p>
                     <small>Serhii Shepel</small>
                 </p>
@@ -71,11 +72,11 @@
                             <li>How to get started</li>
                         </ul>
                     </li>
+                    <li class="fragment">Own experience</li>
                     <li class="fragment">Basic Concepts</li>
                     <li class="fragment">How does a search engine work</li>
                     <li class="fragment">Mapping</li>
                     <li class="fragment">Search</li>
-                    <li class="fragment">Own experience</li>
                 </ul>
             </section>
 
@@ -118,15 +119,11 @@
                 <section>
                     <h2>It is that easy</h2>
                     <ul>
-                        <li>Download Elasticsearch from www.elastic.co</li>
+
                         <li>Elasticsearch only requires Java to run</li>
+                        <li>Download Elasticsearch from <a href="https://www.elastic.co/downloads/elasticsearch">https://www.elastic.co/downloads/elasticsearch</a></li>
+                        <li>Run bin/elasticsearch (or bin\elasticsearch.bat on Windows)</li>
                     </ul>
-                    <pre><code class="hljs" data-trim contenteditable>
-    wget https://download.elasticsearch.org/elasticsearch/release/...
-    tar -zxvf elasticsearch-2.2.0.tar.gz
-    cd elasticsearch-2.2.0/bin
-    ./elasticsearch.sh
-                    </code></pre>
                 </section>
 
                 <section>
@@ -150,18 +147,20 @@
                     <p>You can access it at http://localhost:9200 on your web browser, which returns this:</p>
                     <pre class="fragment"><code class="hljs" data-trim contenteditable>
 {
-    "status":200,
-    "name":"Cypher",
-    "cluster_name":"elasticsearch",
-    "version":{
-        "number":"1.5.2",
-        "build_hash":"62ff9868b4c8a0c45860bebb259e21980778ab1c",
-        "build_timestamp":"2015-04-27T09:21:06Z",
-        "build_snapshot":false,
-        "lucene_version":"4.10.4"
+    "name" : "kuucVcC",
+    "cluster_name" : "td.compent.06",
+    "cluster_uuid" : "285XslkaRamjo7zO6OOL6w",
+    "version" : {
+        "number" : "6.0.0",
+        "build_hash" : "8f0685b",
+        "build_date" : "2017-11-10T18:41:22.859Z",
+        "build_snapshot" : false,
+        "lucene_version" : "7.0.1",
+        "minimum_wire_compatibility_version" : "5.6.0",
+        "minimum_index_compatibility_version" : "5.0.0"
     },
-    "tagline":"You Know, for Search"
-}                    
+    "tagline" : "You Know, for Search"
+}                  
                     </code></pre>
                 </section>
 
@@ -176,15 +175,6 @@
                                 <li>PUT (update)</li>
                                 <li>DELETE (delete)</li>
                             </ul>
-                    </ul>
-                </section>
-
-                <section>
-                    <h2>DEMO - CURL works just fine</h2>
-                    <img height="300" data-src="images/crud.png" />
-                    <ul>
-                        <li class="fragment">An index is like a database</li>
-                        <li class="fragment">An type is like a SQL table</li>
                     </ul>
                 </section>
 
@@ -249,22 +239,121 @@ $curl -X PUT localhost:9200/big-one/pizza/1 --data
                     </code></pre>
                 </section>
 
-                <!--<section>
-                    <h2>So far, all we have is a NoSQL document store which is fast, reliable, scalable and easy to use! Now
-                        to the really cool part, full-text search...</h2>
-                </section>-->
+                <section>
+                    <h2>NEST</h2>
+                    <p>The high level client, ElasticClient, provides a strongly typed query DSL that maps one-to-one
+                        with the Elasticsearch query DSL.</p>
+                    <p>It can be installed from the Package Manager Console inside Visual Studio using.</p>
+                    <pre><code class="hljs" data-trim contenteditable>
+                        Install-Package NEST
+                    </code></pre>
+                </section>
 
                 <section>
-                    <h2>So far</h2>
-                    <ul>
-                        <li>All we have is NoSQL document store which is
+                    <h2>C#</h2>
+                    <pre><code class="csharp" data-trim contenteditable>
+container.Register<IElasticClient>(() => new ElasticClient(CreateSearchConnectionSettings(container)), Lifestyle.Singleton);
+private static IConnectionSettingsValues CreateSearchConnectionSettings(Container container)
+{
+    var configuration = container.GetInstance&lt;ISearchConfiguration&gt;();
+    var uri = new UriBuilder(Uri.UriSchemeHttp, configuration.Host, configuration.Port).Uri;
+    var connectionPool = new SingleNodeConnectionPool(uri);
+
+    var connectionSettings = new ConnectionSettings(connectionPool);
+#if DEBUG 
+    connectionSettings.DisableDirectStreaming();
+#endif
+    return connectionSettings;
+}
+                        </code></pre>
+                </section>
+                <section>
+                    <h2>C#</h2>
+                    <pre><code class="csharp" data-trim contenteditable>
+private async Task Create(IElasticClient client, CustomerDocument document)
+{
+    var createResponse = await client.CreateAsync(document, descriptor => descriptor
+        .Index("Customer")
+        .Refresh(Refresh.False)
+    );
+
+    Logger.Log(createResponse.DebugInformation);
+}
+                            </code></pre>
+                </section>
+                <section>
+                    <h2>C#</h2>
+                    <pre><code class="csharp" data-trim contenteditable>
+private async Task Create(IElasticClient client, CustomerDocument document)
+{
+    var createResponse = await client.CreateAsync(document, descriptor => descriptor
+        .Index("Customer")
+        .Refresh(Refresh.False)
+    );
+
+    Logger.Log(createResponse.DebugInformation);
+}
+                                </code></pre>
+                </section>
+                <section>
+                    <h2>Refresh</h2>
+                    <uL>
+                        <li>true
                             <ul>
-                                <li>Fast</li>
-                                <li>Scalable</li>
-                                <li>Easy to use</li>
+                                <li>Refresh the relevant primary and replica shards (not the whole index) immediately
+                                    after the operation occurs, so that the updated document appears in search results
+                                    immediately. This should ONLY be done after careful thought and verification that it
+                                    does
+                                    not lead to poor performance, both from an indexing and a search standpoint.</li>
                             </ul>
                         </li>
-                    </ul>
+                    </uL>
+                </section>
+                <section>
+                    <h2>Refresh</h2>
+                    <uL>
+                        <li>wait_for
+                            <ul>
+                                <li>Wait for the changes made by the request to be made visible by a refresh before
+                                    replying. This doesn’t force an immediate refresh, rather, it waits for a refresh to
+                                    happen.
+                                    Elasticsearch automatically refreshes shards that have changed every
+                                    index.refresh_interval
+                                    which defaults to one second. That setting is dynamic. Calling the Refresh API or
+                                    setting
+                                    refresh to true on any of the APIs that support it will also cause a refresh, in
+                                    turn
+                                    causing already running requests with refresh=wait_for to return.</li>
+                            </ul>
+                        </li>
+                    </uL>
+                </section>
+                <section>
+                    <h2>Refresh</h2>
+                    <uL>
+                        <li>false (the default)
+                            <ul>
+                                <li>Take no refresh related actions. The changes made by this request will
+                                    be made visible at some point after the request returns.</li>
+                            </ul>
+                        </li>
+                    </uL>
+                </section>
+            </section>
+
+            <section data-title="Own experience with Elasticsearch">
+                <section>
+                    <h2>Own experience with Elasticsearch</h2>
+                </section>
+
+                <section>
+                    <h2>How to use Ealsticsearch?</h2>
+                    <p>Used in addition to another database...</p>
+                    <img height="350" data-src="images/overview.png" />
+                </section>
+                <section>
+                    <a target="_blank" href="https://teamdanmark.dk/om-os/atleter-og-resultater/resultater"><img
+                            height="650" width="1000" data-src="images/medaloverview.png" /></a>
                 </section>
             </section>
 
@@ -455,7 +544,7 @@ $curl -X PUT localhost:9200/big-one/pizza/1 --data
                                 <li>a type which supports the hierarchical nature of JSON such as
                                     <i>object</i> or <i>nested</i>.</li>
                                 <li>or a specialised type like <i>geo_point</i>, <i>geo_shape</i>, or
-                                    <i>completion</i>>.</li>
+                                    <i>completion</i>.</li>
                             </ul>
                         </li>
                     </ul>
@@ -477,21 +566,24 @@ $curl -X PUT localhost:9200/big-one/pizza/1 --data
                 </section>
                 <section>
                     <pre><code class="csharp" style="max-height: 650px">    
-public class CustomerInfoSearchDocumentMap 
-    : PropertiesDescriptor&lt;CustomerInfoSearchDocument&gt;
+public class Customer
 {
-    public CustomerInfoSearchDocumentMap()
+    public Id Id { get; set; }
+
+    public string FullName { get; set; }
+
+    public int Age { get; set; }
+}
+                                    </code></pre>
+                </section>
+                <section>
+                    <pre><code class="csharp" style="max-height: 650px">    
+public class CustomerMap : PropertiesDescriptor&lt;Customer&gt;
+{
+    public CustomerMap()
     {
         Keyword(p => p.Name(n => n.Id).Index());
         Number(p => p.Name(n => n.Age).Index());
-        Text(p => p.Name(n => n.FirstName)
-                .Analyzer(Analyzer.PrimaryField)
-                .SearchAnalyzer(Analyzer.PrimaryFieldSearch)
-        );
-        Text(p => p.Name(n => n.LastName)
-                .Analyzer(Analyzer.PrimaryField)
-                .SearchAnalyzer(Analyzer.PrimaryFieldSearch)
-        );
         Text(p => p.Name(n => n.FullName).Index()
                 .Fields(fs => fs
                     .Keyword(k => k
@@ -502,7 +594,28 @@ public class CustomerInfoSearchDocumentMap
 }
                                 </code></pre>
                 </section>
+                <section>
+                    <h2>Id</h2>
+                    <pre><code class="csharp" style="max-height: 650px">    
+Id idFromInt = 1;
+Id idFromLong = 2L;
+Id idFromString = "hello-world";
+Id idFromGuid = new Guid("D70BD3CF-4E38-46F3-91CA-FCBEF29B148E");
 
+Expect(1).WhenSerializing(idFromInt);
+Expect(2).WhenSerializing(idFromLong);
+Expect("hello-world").WhenSerializing(idFromString);
+Expect("d70bd3cf-4e38-46f3-91ca-fcbef29b148e").WhenSerializing(idFromGuid);
+                                    </code></pre>
+                </section>
+                <section>
+                    <h2>Analyzer</h2>
+                    <ul>
+                        <li>Tokenizer</li>
+                        <li>Filters</li>
+                        <li>CharFilters</li>
+                    </ul>
+                </section>
                 <section>
                     <h2>Analyzer</h2>
                     <ul>
@@ -832,7 +945,7 @@ public class BookMap
                 </code></pre>
                 </section>
                 <section>
-                    
+
                     <pre><code data-trim contenteditable>
 PUT book/_doc/1
 {
@@ -862,8 +975,8 @@ PUT book/_doc/1
 
                 </section>
                 <section>
-                        <h2>Nested vs Object</h2>
-                        <pre><code data-trim contenteditable>
+                    <h2>Nested vs Object</h2>
+                    <pre><code data-trim contenteditable>
 GET my_index/_search
 {
     "query": {
@@ -876,7 +989,7 @@ GET my_index/_search
     }
 }
                         </code></pre>
-                    </section>
+                </section>
             </section>
 
             <section data-title="Search">
@@ -957,18 +1070,6 @@ GET /gitHubItem/_search
                 </section>
             </section>
 
-            <section data-title="Own experience with Elasticsearch">
-                <section>
-                    <h2>Own experience with Elasticsearch</h2>
-                </section>
-
-                <section>
-                    <h2>How to use Ealsticsearch?</h2>
-                    <p>Commonly used in addition to another database...</p>
-                    <img height="350" data-src="images/overview.png" />
-                </section>
-            </section>
-
             <section>
                 <h2>Questions?</h2>
             </section>
@@ -990,6 +1091,8 @@ GET /gitHubItem/_search
                             and Analytics (using Elasticsearch)</a></li>
                     <li><a href="http://www.slideshare.net/sdenthumdas/introduction-to-elasticsearch-47385272"
                             target="_blank">Introduction to Elastic-search</a></li>
+                    <li><a href="https://github.com/eoaksnes/introduction-to-elasticsearch" target="_blank">Introduction
+                            to Elastic-search</a></li>
                 </ul>
             </section>
         </div>
